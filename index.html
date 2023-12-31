@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./stylecalendar.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <main>
+        <div class="grayeffect">
+            <div class="calendar_wrapper">
+                <div class="calendar_head">
+                    <div class="skip_icons">
+                        <i onclick="prev()" class="fa-solid fa-chevron-left"></i>
+                    </div>
+                    <div class="month_year">
+
+                    </div>
+                    <div class="skip_icons">
+                        <i onclick="next()" class="fa-solid fa-chevron-right"></i>
+                    </div>
+                </div>
+                <div class="calendar_body">
+                    <ul class="week_days">
+                        <li>Sun</li>
+                        <li>Mon</li>
+                        <li>Tue</li>
+                        <li>Wed</li>
+                        <li>Thu</li>
+                        <li>Fri</li>
+                        <li>Sat</li>
+                    </ul>
+                    <ul class="days">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="month_inputs">
+            
+        </div>
+    </main>
+
+
+    <script>
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+        let bg = document.querySelector("main")
+        let day_section = document.querySelector(".days")
+        let current_date = document.querySelector(".calendar_head .month_year")
+        let date = new Date()
+        let this_year = date.getFullYear()
+        let real_year = this_year
+        let this_month_index = date.getMonth()
+        let real_month_index = this_month_index
+        let this_day = date.getDate()
+        let this_weekday = date.getDay()
+        let month_checks = document.querySelector(".month_inputs")
+        let checkinputs = document.querySelectorAll(".month_inputs input")
+
+
+
+        function currentmoment() {
+            current_date.innerHTML = `
+                        <p>${months[this_month_index]}</p> 
+                        <p>${this_year}</p>`
+        }
+        currentmoment()
+
+        function setcalendar() {
+
+            let count_of_days = new Date(this_year, this_month_index + 1, 0).getDate()
+            let count_of_days_premonth = new Date(this_year, this_month_index, 0).getDate()
+            let weekday_of_firstday = new Date(this_year, this_month_index, 1).getDay()
+            let weekday_of_lastday = new Date(this_year, this_month_index, count_of_days).getDay()
+
+
+            let code = ''
+            for (let j = count_of_days_premonth; j > count_of_days_premonth - weekday_of_firstday; j--) {
+                code = `<li class="deactive">${j}</li>` + code
+            }
+            day_section.innerHTML += code
+            code = ''
+            for (let i = 1; i <= count_of_days; i++) {
+                code += (i == this_day && (real_year == this_year && real_month_index == this_month_index)) ? `<li class="today chosen">${i}</li>` : `<li>${i}</li>`
+            }
+            day_section.innerHTML += code
+            code = ''
+            for (let k = 1; k < 7 - weekday_of_lastday; k++) {
+                code += `<li class="deactive">${k}</li>`
+            }
+            day_section.innerHTML += code
+
+            if (this_month_index + 1 >= 9 && this_month_index + 1 <= 11) {
+                bg.style.backgroundImage = "url(./img/Payiz.jpg)"
+            } else if (this_month_index + 1 >= 6 && this_month_index + 1 <= 9) {
+                bg.style.backgroundImage = "url(./img/summer.jpg)"
+            } else if (this_month_index + 1 >= 3 && this_month_index + 1 <= 5) {
+                bg.style.backgroundImage = "url(./img/Yaz.jpg)"
+            } else {
+                bg.style.backgroundImage = "url(./img/winter.jpeg)"
+            }
+
+
+
+        }
+
+        setcalendar()
+
+        function prev() {
+
+            this_month_index = this_month_index - 1
+            if (this_month_index == -1) {
+                this_month_index = 11
+                this_year -= 1
+            }
+            current_date.innerHTML = `
+                        <p>${months[this_month_index]}</p> 
+                        <p>${this_year}</p>`
+            day_section.innerHTML = ""
+            setcalendar()
+
+
+        }
+
+        function next() {
+
+
+            this_month_index = this_month_index + 1
+            if (this_month_index == 12) {
+                this_month_index = 0
+                this_year += 1
+            }
+            current_date.innerHTML = `
+                        <p>${months[this_month_index]}</p> 
+                        <p>${this_year}</p>`
+            day_section.innerHTML = ""
+            setcalendar()
+
+
+        }
+
+
+        let code = ""
+        for (let i = 0; i < months.length; i++) {
+            code += `
+            <div class="input_part">
+                <p>${months[i].slice(0,3)}</p>
+                <input onclick="change_month()" id="${i}" name="months" type="radio">
+            </div>
+            `
+        }
+        month_checks.innerHTML = code
+
+        console.log(checkinputs.length);
+        function change_month(){
+            let checkinputs = document.querySelectorAll(".month_inputs input")
+            for (let j = 0; j < checkinputs.length; j++) {
+                if (checkinputs[j].checked) {
+                        this_month_index = j
+                        current_date.innerHTML = `
+                            <p>${months[this_month_index]}</p> 
+                            <p>${this_year}</p>`
+                        day_section.innerHTML = ""
+                        setcalendar()
+                    
+                }
+            }
+        }
+
+
+
+    </script>
+</body>
+
+</html>
